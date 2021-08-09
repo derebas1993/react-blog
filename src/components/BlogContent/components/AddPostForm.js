@@ -1,22 +1,85 @@
 import "./AddPostForm.css";
 import CancelIcon from '@material-ui/icons/Cancel';
+import { Component } from "react";
 
-export const AddPostForm = ({handleHideAddPostForm}) => {
-  return (
-    <>
-        <form className="add__post-form">
-            <button className='form__close-btn' onClick={handleHideAddPostForm}><CancelIcon/></button>
-            <div>
-                <input className="form__input-title" placeholder="Title Post" type="text" name="postTitle" />
-            </div>
-            <div>
-                <textarea className="form__textarea" placeholder="Description Post" name="postDescription" />
-            </div>
-            <div>
-                <button className="form__btn" onClick={handleHideAddPostForm} type="button">Add post</button>
-            </div>
-        </form>
-        <div className="overlay" onClick={handleHideAddPostForm}></div>
-    </>
-  );
+export class AddPostForm extends Component {
+
+    state = {
+        postTitle: '',
+        postDescription: ''
+    }
+
+    handlePostTitleChenge = e => {
+        this.setState({
+            postTitle: e.target.value
+        })
+    }
+    
+    handlePostDescriptionChenge = e => {
+        this.setState({
+            postDescription: e.target.value
+        })
+    }
+
+    //==========================CREATE A NEW POST========
+    createPost = () => {
+        const post = {
+            id: this.props.blogArr.length + 1,
+            title: this.state.postTitle,
+            description: this.state.postDescription,
+            liked: false
+        }
+        this.props.addNewPost(post)
+    }
+
+
+    // componentDidMount() {
+    //     console.log('component form reder');
+    // }
+
+    // componentDidUpdate() {
+    //     console.log('component form update');
+    // }
+
+    // componentWillUnmount() {
+    //     console.log('component form close');
+    // }
+
+    render() {
+        const handleHideAddPostForm = this.props.handleHideAddPostForm;
+        return (
+            <>
+                <form className="add__post-form">
+                    <button className='form__close-btn' onClick={handleHideAddPostForm}><CancelIcon/></button>
+                    <div>
+                        <input 
+                            className="form__input-title" 
+                            onChange={this.handlePostTitleChenge} 
+                            value={this.state.postTitle} 
+                            placeholder="Title Post" 
+                            type="text" 
+                            name="postTitle" 
+                        />
+                    </div>
+                    <div>
+                        <textarea 
+                            className="form__textarea" 
+                            value={this.state.postDescription} 
+                            placeholder="Description Post" 
+                            name="postDescription"
+                            onChange={this.handlePostDescriptionChenge} 
+                        />
+                    </div>
+                    <div>
+                        <button 
+                            className="form__btn" 
+                            onClick={this.createPost} 
+                            type="button">Add post
+                        </button>
+                    </div>
+                </form>
+                <div className="overlay" onClick={handleHideAddPostForm}></div>
+            </>
+          );
+    }
 };

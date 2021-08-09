@@ -9,6 +9,8 @@
     background-color: black;
     color: #fff;
     transition: all .4s;
+    display: block;
+    margin: 30px auto;
 }
 
 .blackBtn:hover {

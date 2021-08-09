@@ -4,6 +4,7 @@ import "./BlogContent.css";
 import { AddPostForm } from "./components/AddPostForm";
 import axios from "axios";
 import {postsUrl} from '../../shared/projectData'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export class BlogContent extends Component {
   state = {
@@ -13,9 +14,6 @@ export class BlogContent extends Component {
   };
 
   fetchPosts = () => {
-    this.setState({
-      isPending: true
-    })
     axios.get(postsUrl)
     .then((respons) => {
       this.setState({
@@ -29,19 +27,25 @@ export class BlogContent extends Component {
   }
 
 
-  likePost = (pos) => {
-    const temp = [...this.state.blogArr];
-    temp[pos].liked = !temp[pos].liked;
+  likePost = (blogPost) => {
 
-    this.setState({
-      blogArr: temp,
-    });
+    const temp = {...blogPost};
+    temp.liked = !temp.liked;
 
-    localStorage.setItem("blogPosts", JSON.stringify(temp));
+    axios.put(`${postsUrl}/${blogPost.id}`, temp)
+      .then((response) => {
+        this.fetchPosts()
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   };
 
   deletePost = (blogPost) => {
     if (window.confirm(`Do you want to delete this post ${blogPost.title} ?`)) {
+      this.setState({
+        isPending: true
+      })
       axios.delete(`${postsUrl}/${blogPost.id}`)
         .then((respons) => {
           console.log(respons.data);
@@ -52,6 +56,20 @@ export class BlogContent extends Component {
         })
     }
   };
+
+  //==================ADD A NEW POST====================
+    addNewPost = (blogPost) => {
+      this.setState({
+        isPending: true
+      })
+      axios.post(postsUrl, blogPost)
+        .then((response) => {
+          this.fetchPosts()
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
 
   handleShowAddPostForm = () => {
     this.setState({
@@ -64,18 +82,6 @@ export class BlogContent extends Component {
       showAddPostForm: false,
     });
   };
-
-  //==================ADD A NEW POST====================
-  addNewPost = (blogPost) => {
-    this.setState((state) => {
-      const posts = [...state.blogArr];
-      posts.push(blogPost)
-      localStorage.setItem('blogPosts', JSON.stringify(posts))
-      return {
-        blogArr: posts
-      }
-    })
-  }
 
   // =======CLOSE FORM ON PUSH ESCAPE==========
   handleEscape = (e) => {
@@ -103,17 +109,18 @@ export class BlogContent extends Component {
           title={item.title}
           description={item.description}
           liked={item.liked}
-          likePost={() => this.likePost(pos)}
+          likePost={() => this.likePost(item)}
           deletePost={() => this.deletePost(item)}
         />
       );
     });
 
-    if(this.state.blogArr.length === 0)
-      return <h1>Load data...</h1>
+    if(this.state.blogArr.length === 0) return <h1>Load data...</h1>
+
+    const postsOpacity = this.state.isPending ? 0.5 : 1
 
     return (
-      <>
+      <div className='blog__page'>
         {this.state.showAddPostForm && (
           <AddPostForm
             blogArr={this.state.blogArr}
@@ -126,12 +133,14 @@ export class BlogContent extends Component {
           <button className="blackBtn" onClick={this.handleShowAddPostForm}>
             Create new post
           </button>
+          <div className="posts" style={{opacity: postsOpacity}}>
+            {blogPosts}
+          </div>
           {
-            this.state.isPending && <h2>Whait...</h2>
+            this.state.isPending && <CircularProgress className='preloader' />
           }
-          <div className="posts">{blogPosts}</div>
         </>
-      </>
+      </div>
     );
   }
 }

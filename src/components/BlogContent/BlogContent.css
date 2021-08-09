@@ -1,7 +1,18 @@
+.blog__page {
+    position: relative;
+}
+
+.blog__page .preloader {
+    position: absolute;
+    left: 48%;
+    top: 48%;
+}
+
 .posts {
     width: 900px;
     margin: 0 auto;
 }
+
 
 .blackBtn {
     padding: 10px 25px;

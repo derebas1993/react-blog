@@ -25,7 +25,6 @@ export class AddPostForm extends Component {
     createPost = (e) => {
         e.preventDefault();
         const post = {
-            id: this.props.blogArr.length + 1,
             title: this.state.postTitle,
             description: this.state.postDescription,
             liked: false

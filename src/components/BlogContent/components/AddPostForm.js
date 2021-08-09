@@ -22,7 +22,8 @@ export class AddPostForm extends Component {
     }
 
     //==========================CREATE A NEW POST========
-    createPost = () => {
+    createPost = (e) => {
+        e.preventDefault();
         const post = {
             id: this.props.blogArr.length + 1,
             title: this.state.postTitle,
@@ -30,6 +31,7 @@ export class AddPostForm extends Component {
             liked: false
         }
         this.props.addNewPost(post)
+        this.props.handleHideAddPostForm()
     }
 
 
@@ -49,7 +51,7 @@ export class AddPostForm extends Component {
         const handleHideAddPostForm = this.props.handleHideAddPostForm;
         return (
             <>
-                <form className="add__post-form">
+                <form className="add__post-form" onSubmit={this.createPost}>
                     <button className='form__close-btn' onClick={handleHideAddPostForm}><CancelIcon/></button>
                     <div>
                         <input 
@@ -67,14 +69,14 @@ export class AddPostForm extends Component {
                             value={this.state.postDescription} 
                             placeholder="Description Post" 
                             name="postDescription"
-                            onChange={this.handlePostDescriptionChenge} 
+                            onChange={this.handlePostDescriptionChenge}
+                            required
                         />
                     </div>
                     <div>
                         <button 
-                            className="form__btn" 
-                            onClick={this.createPost} 
-                            type="button">Add post
+                            className="form__btn"
+                            type="submit">Add post
                         </button>
                     </div>
                 </form>

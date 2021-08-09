@@ -1,13 +1,13 @@
 import { Component } from "react";
-import { posts } from "../../shared/projectData";
 import { BlogCard } from "./components/BlogCard";
 import "./BlogContent.css";
 import { AddPostForm } from "./components/AddPostForm";
+import axios from "axios";
 
 export class BlogContent extends Component {
   state = {
     showAddPostForm: false,
-    blogArr: JSON.parse(localStorage.getItem("blogPosts")) || posts,
+    blogArr: [],
   };
 
   likePost = (pos) => {
@@ -60,7 +60,6 @@ export class BlogContent extends Component {
         blogArr: posts
       }
     })
-    this.handleHideAddPostForm()
   }
 
   // =======CLOSE FORM ON PUSH ESCAPE==========
@@ -70,6 +69,15 @@ export class BlogContent extends Component {
   };
 
   componentDidMount() {
+    axios.get('https://5fb3db44b6601200168f7fba.mockapi.io/api/posts/')
+      .then((respons) => {
+        this.setState({
+          blogArr: respons.data
+        })
+      })
+      .catch((err) => {
+        console.log(err);
+      })
     window.addEventListener("keyup", this.handleEscape);
   }
 
@@ -91,15 +99,18 @@ export class BlogContent extends Component {
       );
     });
 
+    if(this.state.blogArr.length === 0)
+      return <h1>Load data...</h1>
+
     return (
       <>
-        {this.state.showAddPostForm ? (
+        {this.state.showAddPostForm && (
           <AddPostForm
             blogArr={this.state.blogArr}
             addNewPost={this.addNewPost}
             handleHideAddPostForm={this.handleHideAddPostForm}
           />
-        ) : null}
+        )}
         <>
           <h1>Blog</h1>
           <button className="blackBtn" onClick={this.handleShowAddPostForm}>

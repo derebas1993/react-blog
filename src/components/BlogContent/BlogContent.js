@@ -5,12 +5,15 @@ import { AddPostForm } from "./components/AddPostForm";
 import axios from "axios";
 import {postsUrl} from '../../shared/projectData'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { EditPostForm } from "./components/EditPostForm";
 
 export class BlogContent extends Component {
   state = {
     showAddPostForm: false,
+    showEditPostForm: false,
     blogArr: [],
-    isPending: false
+    isPending: false,
+    selectedPost: {}
   };
 
   fetchPosts = () => {
@@ -71,6 +74,21 @@ export class BlogContent extends Component {
         })
     }
 
+    editBlogPost = (updatedBlogPost) => {
+      this.setState({
+        isPending: true
+      })
+
+      axios.put(`${postsUrl}/${updatedBlogPost.id}`, updatedBlogPost)
+      .then((response) => {
+        this.fetchPosts()
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
+  
+  //=========================================ADD POST==
   handleShowAddPostForm = () => {
     this.setState({
       showAddPostForm: true,
@@ -83,23 +101,29 @@ export class BlogContent extends Component {
     });
   };
 
-  // =======CLOSE FORM ON PUSH ESCAPE==========
-  handleEscape = (e) => {
-    if (e.key === "Escape" && this.state.showAddPostForm)
-      this.handleHideAddPostForm();
+  //===========================================EDIT POST==
+  handleShowEditPostForm = () => {
+    this.setState({
+      showEditPostForm: true,
+    });
+  };
+
+  handleHideEditPostForm = () => {
+    this.setState({
+      showEditPostForm: false,
+    });
   };
 
 
+  handleSelectPost = (blogPost) => {
+    this.setState({
+      selectedPost: blogPost
+    })
+  }
+
   componentDidMount() {
     this.fetchPosts()
-    window.addEventListener("keyup", this.handleEscape);
   }
-
-  componentWillUnmount() {
-    window.removeEventListener("keyup", this.handleEscape);
-  }
-
-
 
   render() {
     const blogPosts = this.state.blogArr.map((item, pos) => {
@@ -111,6 +135,8 @@ export class BlogContent extends Component {
           liked={item.liked}
           likePost={() => this.likePost(item)}
           deletePost={() => this.deletePost(item)}
+          handleShowEditPostForm={this.handleShowEditPostForm}
+          handleSelectPost={() => this.handleSelectPost(item)}
         />
       );
     });
@@ -128,6 +154,17 @@ export class BlogContent extends Component {
             handleHideAddPostForm={this.handleHideAddPostForm}
           />
         )}
+
+        {
+          this.state.showEditPostForm && (
+            <EditPostForm 
+              handleHideEditPostForm={this.handleHideEditPostForm}
+              selectedPost={this.state.selectedPost}
+              editBlogPost={this.editBlogPost}
+            />
+          )
+        }
+
         <>
           <h1>Blog</h1>
           <button className="blackBtn" onClick={this.handleShowAddPostForm}>

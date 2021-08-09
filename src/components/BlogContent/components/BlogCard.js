@@ -1,11 +1,17 @@
 import './BlogCard.css'
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
 
-export const BlogCard = ({title, description, liked, likePost, deletePost}) => {
+export const BlogCard = ({title, description, liked, likePost, deletePost, handleShowEditPostForm, handleSelectPost}) => {
+
+  
+  const showEditForm = () => {
+    handleSelectPost();
+    handleShowEditPostForm();
+  }
 
   const heartFill = liked ? 'red' : 'thistle'
-
 
   return (
     <div className="post">
@@ -18,9 +24,14 @@ export const BlogCard = ({title, description, liked, likePost, deletePost}) => {
         </button>
       </div>
       </div>
-      <button>
+      <div>
+        <button className='edit__btn' onClick={showEditForm}>
+          <EditIcon/>
+        </button>
+        <button>
           <DeleteForeverIcon className='delete__btn' onClick={deletePost} />
         </button>
+      </div>
     </div>
   );
 };

@@ -21,7 +21,7 @@ export class AddPostForm extends Component {
         })
     }
 
-    //==========================CREATE A NEW POST========
+    //====================================CREATE A NEW POST========
     createPost = (e) => {
         e.preventDefault();
         const post = {
@@ -33,18 +33,19 @@ export class AddPostForm extends Component {
         this.props.handleHideAddPostForm()
     }
 
+    // ===========================================CLOSE FORM ON PUSH ESCAPE==========
+    handleEscape = (e) => {
+        if (e.key === "Escape")
+          this.props.handleHideAddPostForm();
+      };
 
-    // componentDidMount() {
-    //     console.log('component form reder');
-    // }
+    componentDidMount() {
+        window.addEventListener('keyup', this.handleEscape)
+    }
 
-    // componentDidUpdate() {
-    //     console.log('component form update');
-    // }
-
-    // componentWillUnmount() {
-    //     console.log('component form close');
-    // }
+    componentWillUnmount() {
+        window.removeEventListener('keyup', this.handleEscape)
+    }
 
     render() {
         const handleHideAddPostForm = this.props.handleHideAddPostForm;

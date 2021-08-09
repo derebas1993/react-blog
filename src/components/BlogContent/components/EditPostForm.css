@@ -1,0 +1,70 @@
+
+.edit__post-form {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background-color: rgb(192, 192, 160);
+    width: 350px;
+    padding: 45px 25px 25px 25px;
+    border-radius: 10px;
+
+}
+
+.overlay {
+    position: fixed;
+    left: 0%;
+    top: 0%;
+    right: 0%;
+    bottom: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(1, 1, 1, .5);
+    z-index: 2;
+}
+
+.form__btn {
+    padding: 10px 25px;
+    border-radius: 8px;
+    background-color: black;
+    color: #fff;
+    transition: all .4s;
+    display: block;
+    margin: 0 auto;
+}
+
+.form__btn:hover {
+    background-color: red;
+}
+
+.form__textarea {
+    width: 100%;
+    margin-bottom: 20px;
+    min-height: 100px;
+    outline: none;
+    border: none;
+    resize: none;
+}
+
+.form__input-title {
+    width: 100%;
+    margin-bottom: 20px;
+    outline: none;
+    border: none;
+    min-height: 40px;
+}
+
+.form__input-title:focus::placeholder {
+    color: transparent;
+}
+
+.form__textarea:focus::placeholder {
+    color: transparent;
+}
+
+.form__close-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

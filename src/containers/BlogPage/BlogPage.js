@@ -1,11 +1,13 @@
 import { Component } from "react";
 import { BlogCard } from "./components/BlogCard";
-import "./BlogContent.css";
+import "./BlogPage.css";
 import { AddPostForm } from "./components/AddPostForm";
 import axios from "axios";
 import {postsUrl} from '../../shared/projectData'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { EditPostForm } from "./components/EditPostForm";
+
+let source;
 
 export class BlogContent extends Component {
   state = {
@@ -17,7 +19,8 @@ export class BlogContent extends Component {
   };
 
   fetchPosts = () => {
-    axios.get(postsUrl)
+    source = axios.CancelToken.source();
+    axios.get(postsUrl, {cancelToken: source.token})
     .then((respons) => {
       this.setState({
         blogArr: respons.data,
@@ -27,6 +30,16 @@ export class BlogContent extends Component {
     .catch((err) => {
       console.log(err);
     })
+  }
+
+  componentDidMount() {
+    this.fetchPosts()
+  }
+
+  componentWillUnmount() {
+    if(source) {
+      source.cancel();
+    }
   }
 
 
@@ -119,10 +132,6 @@ export class BlogContent extends Component {
     this.setState({
       selectedPost: blogPost
     })
-  }
-
-  componentDidMount() {
-    this.fetchPosts()
   }
 
   render() {

@@ -70,6 +70,7 @@ export class AddPostForm extends Component {
                             placeholder="Description Post" 
                             name="postDescription"
                             onChange={this.handlePostDescriptionChenge}
+                            rows={8}
                             required
                         />
                     </div>

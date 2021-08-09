@@ -72,6 +72,7 @@ export class EditPostForm extends Component {
               placeholder="Description Post"
               name="postDescription"
               onChange={this.handlePostDescriptionChenge}
+              rows={8}
             />
           </div>
           <div>

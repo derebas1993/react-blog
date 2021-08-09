@@ -3,12 +3,31 @@ import { BlogCard } from "./components/BlogCard";
 import "./BlogContent.css";
 import { AddPostForm } from "./components/AddPostForm";
 import axios from "axios";
+import {postsUrl} from '../../shared/projectData'
 
 export class BlogContent extends Component {
   state = {
     showAddPostForm: false,
     blogArr: [],
+    isPending: false
   };
+
+  fetchPosts = () => {
+    this.setState({
+      isPending: true
+    })
+    axios.get(postsUrl)
+    .then((respons) => {
+      this.setState({
+        blogArr: respons.data,
+        isPending: false
+      })
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
+
 
   likePost = (pos) => {
     const temp = [...this.state.blogArr];
@@ -21,20 +40,16 @@ export class BlogContent extends Component {
     localStorage.setItem("blogPosts", JSON.stringify(temp));
   };
 
-  deletePost = (pos) => {
-    if (
-      window.confirm(
-        `Do you want to delete this post ${this.state.blogArr[pos].title} ?`
-      )
-    ) {
-      const temp = [...this.state.blogArr];
-      temp.splice(pos, 1);
-
-      this.setState({
-        blogArr: temp,
-      });
-
-      localStorage.setItem("blogPosts", JSON.stringify(temp));
+  deletePost = (blogPost) => {
+    if (window.confirm(`Do you want to delete this post ${blogPost.title} ?`)) {
+      axios.delete(`${postsUrl}/${blogPost.id}`)
+        .then((respons) => {
+          console.log(respons.data);
+          this.fetchPosts()
+        })
+        .catch((err) => {
+          console.log(err);
+        })
     }
   };
 
@@ -68,22 +83,17 @@ export class BlogContent extends Component {
       this.handleHideAddPostForm();
   };
 
+
   componentDidMount() {
-    axios.get('https://5fb3db44b6601200168f7fba.mockapi.io/api/posts/')
-      .then((respons) => {
-        this.setState({
-          blogArr: respons.data
-        })
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+    this.fetchPosts()
     window.addEventListener("keyup", this.handleEscape);
   }
 
   componentWillUnmount() {
     window.removeEventListener("keyup", this.handleEscape);
   }
+
+
 
   render() {
     const blogPosts = this.state.blogArr.map((item, pos) => {
@@ -94,7 +104,7 @@ export class BlogContent extends Component {
           description={item.description}
           liked={item.liked}
           likePost={() => this.likePost(pos)}
-          deletePost={() => this.deletePost(pos)}
+          deletePost={() => this.deletePost(item)}
         />
       );
     });
@@ -116,6 +126,9 @@ export class BlogContent extends Component {
           <button className="blackBtn" onClick={this.handleShowAddPostForm}>
             Create new post
           </button>
+          {
+            this.state.isPending && <h2>Whait...</h2>
+          }
           <div className="posts">{blogPosts}</div>
         </>
       </>

@@ -1,4 +1,4 @@
-
+export const postsUrl = 'https://6111131fc38a0900171f0fc1.mockapi.io/posts';
 
 export const posts = [
     {
